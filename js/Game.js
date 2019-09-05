@@ -50,7 +50,9 @@ class Game {
             }
         }
     }
-
+    /**
+     * Finds Space object to drop Token into, drops Token
+     */
     playToken() {
         let spaces = this.board.spaces;
         let activeToken = this.activePlayer.activeToken;
@@ -75,6 +77,30 @@ class Game {
         }
         // else there's no empty spcae in the column so the token can't be dropeed
 
+    }
+    /** 
+     * Updates game state after token is dropped. 
+     * @param   {Object}  token  -  The token that's being dropped.
+     * @param   {Object}  target -  Targeted space for dropped token.
+     */
+    updateGameState(token, target) {
+        target.mark(token);
+
+        if (this.checkForWin(target)) {
+            this.gameOver(`${this.activePlayer.name} wins!`);
+
+        } else {
+            this.switchPlayers();
+
+            if (this.activePlayer.checkTokens()) {
+                this.activePlayer.activeToken.drawHTMLToken();
+                this.ready = true
+
+            } else {
+                this.gameOver('No more tokens')
+            }
+
+        }
     }
 
     /** 
@@ -143,10 +169,12 @@ class Game {
         for (let player of this.players) {
             player.active = player.active === true ? false : true;
         }
+        //--alternatively--
         // for (let player of this.players) {
         //     player.active = !player.active;
         //   }
     }
+
     /** 
      * Displays game over message.
      * @param {string} message - Game over message.      
@@ -155,32 +183,6 @@ class Game {
         const div = document.getElementById('game-over');
         div.textContent = message;
         div.style.display = 'block';
-    }
-
-
-    /** 
-    * Updates game state after token is dropped. 
-    * @param   {Object}  token  -  The token that's being dropped.
-    * @param   {Object}  target -  Targeted space for dropped token.
-    */
-    updateGameState(token, target) {
-        target.mark(token);
-
-        if (this.checkForWin(target)) {
-            this.gameOver(`${this.activePlayer.name} wins!`);
-
-        } else {
-            this.switchPlayers();
-
-            if (this.activePlayer.checkTokens()) {
-                this.activePlayer.activeToken.drawHTMLToken();
-                this.ready = true
-
-            } else {
-                this.gameOver('No more tokens')
-            }
-
-        }
     }
 
 }
